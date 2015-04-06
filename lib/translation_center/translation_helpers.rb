@@ -30,8 +30,8 @@ module TranslationCenter
 
   def wrap_span(translation, translation_key)
     # put the inspector class if inspector is all and the key doesn't belongs to translation_center
-      Rails.logger = Logger.new(STDOUT)
-     Rails.logger.warn("\033[32m#{translation}\033[0m")
+     #  Rails.logger = Logger.new(STDOUT)
+     # Rails.logger.warn("\033[32m#{translation}\033[0m")
     # asdasdasd
     if TranslationCenter::CONFIG['inspector'] == 'all' && translation_key.name.to_s.split('.').first != 'translation_center'
       "<span class='tc-inspector-key' data-locale='#{I18n.locale}' data-type='#{translation_key.status(I18n.locale)}' data-id='#{translation_key.id}'> #{translation} </span>".html_safe
@@ -87,17 +87,17 @@ module TranslationCenter
         # TODO should use ancestors for keys
         return translation_key.children_translations(locale)
       end
-     Rails.logger = Logger.new(STDOUT)
-     Rails.logger.warn("\033[32mtranslation_key: #{translation_key.inspect}\033[0m")
-     Rails.logger.warn("\033[32mval: #{val}\033[0m")
+     # Rails.logger = Logger.new(STDOUT)
+     # Rails.logger.warn("\033[32mtranslation_key: #{translation_key.inspect}\033[0m")
+     # Rails.logger.warn("\033[32mval: #{val}\033[0m")
       wrap_span(val, translation_key)
     else
 
       translation_value = translate_without_adding(locale, key, options)
-    Rails.logger.warn("\033[32mtranslation_value.class: #{translation_value.class}\033[0m")
-     Rails.logger.warn("\033[32mtranslation_value: #{translation_value}\033[0m")
-     Rails.logger.warn("\033[32mtranslation_key: #{translation_key}\033[0m")
-     Rails.logger.warn("\033[32moptions: #{options}\033[0m")
+    # Rails.logger.warn("\033[32mtranslation_value.class: #{translation_value.class}\033[0m")
+    #  Rails.logger.warn("\033[32mtranslation_value: #{translation_value}\033[0m")
+    #  Rails.logger.warn("\033[32mtranslation_key: #{translation_key}\033[0m")
+    #  Rails.logger.warn("\033[32moptions: #{options}\033[0m")
       translation_value.class == Hash ? translation_value : wrap_span(translation_value, translation_key)
     end
   end
