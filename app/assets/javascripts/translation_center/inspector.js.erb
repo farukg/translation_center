@@ -1,5 +1,5 @@
 // Get the translation center engine root path
-translation_center_root = "<%= Rails.application.routes.url_helpers.translation_center_path %>"
+translation_center_root = "<%= Rails.application.routes.url_helpers.admin_translator_path %>"
 
 translation_center_translation_key_path = function(id) { return translation_center_root + '/translation_keys/' + id }
 
@@ -23,7 +23,7 @@ function attachInspectorLinks(){
     var id = $(this).data('id');
     // missing translation will be in red while translated will be in green
     var badgeClass = getBadge($(this).data('type'));
-    $('#tc-inspector-links').append($('<a>').attr('title', 'Click to visit key').attr('target', 'key_inspect').attr('href', translation_center_translation_key_path(id) + "?lang_to=" + $(this).data('locale')).attr('data-id', id).attr('style', 'left:' + left + 'px;top:' + top + 'px' ).attr('class', 'icon-edit tc-badge ' + badgeClass  + ' tc-inspector-link'));
+    $('#tc-inspector-links').append($('<a>').attr('title', 'Click to visit key').attr('target', 'key_inspect').attr('href', translation_center_translation_key_path(id) + "?lang_to=" + $(this).data('locale')).attr('data-id', id).attr('style', 'left:' + left + 'px;top:' + top + 'px' ).attr('class', 'glyphicon glyphicon-edit tc-badge ' + badgeClass  + ' tc-inspector-link'));
 
   });
 
