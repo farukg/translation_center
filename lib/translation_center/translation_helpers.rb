@@ -1,8 +1,8 @@
 module TranslationCenter
-
+#Rails.logger = Logger.new(STDOUT)
   # Return the default translator by building and returning the translator object
   def self.prepare_translator
-
+    #Rails.logger.warn("\033[33m-prepare_translator\033[0m")
     translator = TranslationCenter::CONFIG['translator_type'].camelize.constantize.where(TranslationCenter::CONFIG['identifier_type'] => TranslationCenter::CONFIG['yaml_translator_identifier']).first
     
     # if translator doesn't exist then create him
@@ -21,6 +21,8 @@ module TranslationCenter
   end
 
   def self.included(base)
+     #Rails.logger.warn("\033[33m-included\033[0m")
+     #Rails.logger.warn("\033[33m-base-#{base}\033[0m")
     base.class_eval do
       alias_method_chain :translate, :adding if(TranslationCenter::CONFIG['enabled'])
     end
@@ -29,9 +31,10 @@ module TranslationCenter
   # wraps a span if inspector option is set to all
 
   def wrap_span(translation, translation_key)
+     #Rails.logger.warn("\033[33m-wrap_span\033[0m")
     # put the inspector class if inspector is all and the key doesn't belongs to translation_center
-     #  Rails.logger = Logger.new(STDOUT)
-     # Rails.logger.warn("\033[32m#{translation}\033[0m")
+     #  
+     # #Rails.logger.warn("\033[32m#{translation}\033[0m")
     # asdasdasd
     if TranslationCenter::CONFIG['inspector'] == 'all' && translation_key.name.to_s.split('.').first != 'translation_center'
       "<span class='tc-inspector-key' data-locale='#{I18n.locale}' data-type='#{translation_key.status(I18n.locale)}' data-id='#{translation_key.id}'> #{translation} </span>".html_safe
@@ -42,6 +45,8 @@ module TranslationCenter
 
   # make sure the complete key is build using the options such as scope and count
   def prepare_key(key, options)
+         #Rails.logger.warn("\033[33m-prepare_key\033[0m")
+         #Rails.logger.warn("\033[32m-options_vorher #{options}\033[0m")
     complete_key  = key
 
     # if a scope is passed in options then build the full key
@@ -57,13 +62,17 @@ module TranslationCenter
   end
 
   def translate_with_adding(locale, key, options = {})
+       # #Rails.logger.warn("\033[33m-translate_with_adding\033[0m")
     # handle calling translation with a blank key
     # or translation center tables don't exist
-     Rails.logger.warn("\033[33mlocale: #{locale}\033[0m")
-     Rails.logger.warn("\033[33mkey: #{key}\033[0m")
-     Rails.logger.warn("\033[33moptions: #{options}\033[0m")
-     Rails.logger.warn("\033[33moptions.inspect: #{options.inspect}\033[0m")
-    return translate_without_adding(locale, key, options) if key.blank? || !ActiveRecord::Base.connection.table_exists?('translation_center_translation_keys')
+      # #Rails.logger.warn("\033[33mlocale: #{locale}\033[0m")
+      # #Rails.logger.warn("\033[33mkey: #{key}\033[0m")
+      # #Rails.logger.warn("\033[33moptions: #{options}\033[0m")
+
+      # #Rails.logger.warn("\033[33moptions.inspect: #{options.inspect}\033[0m")
+      if key.blank? || !ActiveRecord::Base.connection.table_exists?('translation_center_translation_keys') || !options[:object].nil? || !options[:format].nil?
+        return translate_without_adding(locale, key, options) 
+      end
 
     complete_key = prepare_key(key, options) # prepare complete key
 
@@ -87,17 +96,17 @@ module TranslationCenter
         # TODO should use ancestors for keys
         return translation_key.children_translations(locale)
       end
-     # Rails.logger = Logger.new(STDOUT)
-     # Rails.logger.warn("\033[32mtranslation_key: #{translation_key.inspect}\033[0m")
-     # Rails.logger.warn("\033[32mval: #{val}\033[0m")
+     # #Rails.logger = Logger.new(STDOUT)
+     # #Rails.logger.warn("\033[32mtranslation_key: #{translation_key.inspect}\033[0m")
+     # #Rails.logger.warn("\033[32mval: #{val}\033[0m")
       wrap_span(val, translation_key)
     else
 
       translation_value = translate_without_adding(locale, key, options)
-    # Rails.logger.warn("\033[32mtranslation_value.class: #{translation_value.class}\033[0m")
-    #  Rails.logger.warn("\033[32mtranslation_value: #{translation_value}\033[0m")
-    #  Rails.logger.warn("\033[32mtranslation_key: #{translation_key}\033[0m")
-    #  Rails.logger.warn("\033[32moptions: #{options}\033[0m")
+    # #Rails.logger.warn("\033[32mtranslation_value.class: #{translation_value.class}\033[0m")
+    #  #Rails.logger.warn("\033[32mtranslation_value: #{translation_value}\033[0m")
+    #  #Rails.logger.warn("\033[32mtranslation_key: #{translation_key}\033[0m")
+    #  #Rails.logger.warn("\033[32moptions: #{options}\033[0m")
       translation_value.class == Hash ? translation_value : wrap_span(translation_value, translation_key)
     end
   end
@@ -124,6 +133,7 @@ module I18n
     module Base
       # added another class to be used
       def html_message
+             #Rails.logger.warn("\033[33m-html_message\033[0m")
         category = keys.first
         key = keys.last.to_s.gsub('_', ' ').gsub(/\b('?[a-z])/) { $1.capitalize }
         translation_key = keys
